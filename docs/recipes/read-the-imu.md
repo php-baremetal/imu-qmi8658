@@ -33,7 +33,7 @@ QMI8658 module on any two free pins, with pull-ups on SDA and SCL, and `SA0` dec
   },
   "extra": {
     "baremetal": {
-      "sdk": "esp32@^1.0",
+      "sdk": "esp32@^2.0",
       "board": "waveshare-esp32-s3-touch-lcd-1.85b",
       "runtime": "init-loop",
       "storage": "embedded"
