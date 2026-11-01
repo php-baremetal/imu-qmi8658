@@ -26,7 +26,7 @@ The bus the chip is wired to.
 7-bit address. Pass `0x6A` for a chip strapped to its other address.
 <!-- @endparam -->
 <!-- @param name="$hz" type="int" default="400000" -->
-SCL clock for this device. A value of 0 or less uses 400 kHz.
+SCL clock for this device: 0 uses 400 kHz, otherwise 1 to 1000000 Hz (a negative value throws `\ValueError` from 1.0.2; earlier versions used 400 kHz).
 <!-- @endparam -->
 <!-- @endparams -->
 
@@ -37,7 +37,7 @@ auto-increment, accelerometer ±4 g, gyroscope ±512 dps, both enabled, then a 1
 | Message | Cause |
 | --- | --- |
 | `cannot init qmi8658 at 0x..: ESP_ERR_NOT_FOUND` | Something answered, but its identity is not `0x05`. |
-| `cannot init qmi8658 at 0x..: ...` | The identity read failed, for example `ESP_ERR_TIMEOUT` with no chip. |
+| `cannot init qmi8658 at 0x..: ...` | The identity read or one of the configuration writes failed, for example `ESP_ERR_TIMEOUT` with no chip. |
 | `address 0x.. on this bus is already used by another driver` | A raw device or another driver holds the address. |
 
 Constructing it again with the same bus and address returns a handle to the same device; the chip is not

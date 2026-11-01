@@ -30,6 +30,9 @@
 
 extern const i2c_driver_desc_t qmi8658_driver_desc;
 
+/* Stop at the first failed register write: a half-configured chip must not pass as initialised. */
+#define QMI_WRITE(d, reg, val) do { bm_err_t we = i2c_dev_write_reg1((d), (reg), (val)); if (we != BM_OK) return we; } while (0)
+
 static bm_err_t qmi8658_init(i2c_dev_t *d)
 {
     uint8_t id = 0;
@@ -40,12 +43,12 @@ static bm_err_t qmi8658_init(i2c_dev_t *d)
     if (id != 0x05) {
         return BM_ERR_NOT_FOUND;
     }
-    i2c_dev_write_reg1(d, QMI_CTRL1, 0x40);   /* address auto-increment, little-endian output */
-    i2c_dev_write_reg1(d, QMI_CTRL7, 0x00);   /* sensors off while configuring */
-    i2c_dev_write_reg1(d, QMI_CTRL8, 0xC0);
-    i2c_dev_write_reg1(d, QMI_CTRL2, 0x14);   /* accel +/-4g */
-    i2c_dev_write_reg1(d, QMI_CTRL3, 0x54);   /* gyro +/-512 dps */
-    i2c_dev_write_reg1(d, QMI_CTRL7, 0x03);   /* enable accel + gyro */
+    QMI_WRITE(d, QMI_CTRL1, 0x40);   /* address auto-increment, little-endian output */
+    QMI_WRITE(d, QMI_CTRL7, 0x00);   /* sensors off while configuring */
+    QMI_WRITE(d, QMI_CTRL8, 0xC0);
+    QMI_WRITE(d, QMI_CTRL2, 0x14);   /* accel +/-4g */
+    QMI_WRITE(d, QMI_CTRL3, 0x54);   /* gyro +/-512 dps */
+    QMI_WRITE(d, QMI_CTRL7, 0x03);   /* enable accel + gyro */
     bm_delay_ms(10);
     return BM_OK;
 }
@@ -178,8 +181,8 @@ const i2c_driver_desc_t qmi8658_driver_desc = {
     .name = "qmi8658",
     .php_class = "Qmi8658",
     .capability = "Baremetal\\Sensor\\Imu",
-    .default_addrs = { 0x6B, 0x6A },
-    .n_default_addrs = 2,
+    .default_addrs = { 0x6B },   /* SA0 high; a chip strapped to 0x6A is constructed with that address */
+    .n_default_addrs = 1,
     .default_hz = 400000,
     .init = qmi8658_init,
     .methods = qmi8658_methods,

@@ -138,8 +138,8 @@ device opened through this class. How the registry works:
   throws `cannot init qmi8658 at 0x6B: ESP_ERR_NOT_FOUND` (or the transfer error, such as `ESP_ERR_TIMEOUT`).
 - The chip is configured at construction: address auto-increment, ±4 g, ±512 dps, both sensors on. The ranges
   cannot be changed through the class; use `writeReg()` only if you then convert the raw values yourself.
-- The driver's descriptor also lists `0x6A` (the chip's other strap address), but the constructor only
-  defaults to `0x6B`. For a chip strapped to `0x6A`, pass it: `new Qmi8658($bus, 0x6A)`.
+- The constructor defaults to `0x6B` and does not look for the chip at its other strap address. For a chip
+  strapped to `0x6A`, pass it: `new Qmi8658($bus, 0x6A)`.
 - `poll()` runs on the executor task. With the `power-save` option on, sampling still works on the default
   `Bus::SYNC` bus, but each sample wakes the chip. See
   [Bus ownership and power-save](package:php-baremetal/ext-i2c#docs/reference/ownership-and-power.md).
