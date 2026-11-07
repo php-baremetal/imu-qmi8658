@@ -1,0 +1,66 @@
+<?php
+// php-baremetal/imu-qmi8658 1.1.0 — IDE helper, not loaded at runtime.
+
+namespace Baremetal\I2c\Driver {
+    /**
+     * A QMI8658 6-axis IMU (accelerometer and gyroscope): extends Baremetal\I2c\Device and implements
+     * Baremetal\Sensor\Imu.
+     *
+     * All the Device methods work on it too. The driver declares a sampler, so poll(), sample() and drain() work
+     * on this class: each sample is one 12-byte read of the accelerometer then the gyroscope (x, y, z each, signed
+     * 16-bit little-endian), at most 1000 Hz; temperature is not part of it. Convert a sample with decode().
+     */
+    class Qmi8658 extends \Baremetal\I2c\Device implements \Baremetal\Sensor\Imu
+    {
+        /**
+         * Attaches the chip, reads its identity register and configures it: address auto-increment,
+         * accelerometer +/-4 g, gyroscope +/-512 dps, both enabled, then a 10 ms settle.
+         *
+         * Constructing it again with the same bus and address returns a handle to the same device; the chip is
+         * not reconfigured.
+         *
+         * @param \Baremetal\I2c\Bus $bus The bus the chip is wired to.
+         * @param int $address 7-bit address; pass 0x6A for a chip strapped to its other address.
+         * @param int $hz SCL clock for this device in Hz: 0 uses 400 kHz, otherwise 1 to 1000000.
+         * @throws \ValueError When $hz is negative or above 1000000, or $address is outside 0x08 to 0x77.
+         * @throws \Exception "cannot init qmi8658 at 0x..: ..." (the identity is not 0x05, or the identity read or
+         *                    a configuration write failed, for example with no chip), or "address 0x.. on this bus
+         *                    is already used by another driver".
+         */
+        public function __construct(\Baremetal\I2c\Bus $bus, int $address = 0x6B, int $hz = 400000) {}
+
+        /**
+         * Reads the acceleration on three axes in one 6-byte bus transaction.
+         *
+         * @return array The list [x, y, z] of floats, in g (8192 counts per g).
+         * @throws \Exception "QMI8658 accel read failed".
+         */
+        public function accel(): array {}
+
+        /**
+         * Reads the angular rate on three axes in one 6-byte bus transaction.
+         *
+         * @return array The list [x, y, z] of floats, in degrees per second (64 counts per dps).
+         * @throws \Exception "QMI8658 gyro read failed".
+         */
+        public function gyro(): array {}
+
+        /**
+         * Reads the chip temperature in one 2-byte bus transaction.
+         *
+         * @return float The temperature in degrees Celsius (raw value / 256).
+         * @throws \Exception "QMI8658 temp read failed".
+         */
+        public function temp(): float {}
+
+        /**
+         * Converts one raw sample from sample() or drain() into readings.
+         *
+         * @param string $raw One 12-byte sample: accelerometer x, y, z then gyroscope x, y, z, each signed
+         *                    16-bit little-endian.
+         * @return array ['accel' => [x, y, z] in g, 'gyro' => [x, y, z] in degrees per second].
+         * @throws \ValueError "...: Argument #1 ($raw) a QMI8658 sample is 12 bytes" for a shorter string.
+         */
+        public function decode(string $raw): array {}
+    }
+}

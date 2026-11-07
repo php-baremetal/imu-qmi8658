@@ -17,7 +17,8 @@
         "baremetal": {
             "register": {
                 "i2c_drivers": ["qmi8658_driver_desc"]
-            }
+            },
+            "ide-stubs": ["ide/imu-qmi8658.stub"]
         }
     }
 }

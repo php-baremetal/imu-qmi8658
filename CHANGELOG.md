@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Added: ide/imu-qmi8658.stub, the PHP declarations of the package for IDEs (conductor copies it into vendor/php-baremetal/ide-stubs/).
+
 ## 1.0.2
 
 - Fixed: the constructor ignored failed configuration writes, so a half-configured chip passed as
