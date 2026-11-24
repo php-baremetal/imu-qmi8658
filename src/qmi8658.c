@@ -102,6 +102,7 @@ PHP_METHOD(Qmi8658, accel)
     read_triplet(return_value, d, QMI_AX_L, QMI_ACC_SENS, &ok);
     if (!ok) {
         zval_ptr_dtor(return_value);
+        ZVAL_NULL(return_value);   /* the caller frees an unused result: not the array freed here */
         zend_throw_exception(zend_ce_exception, "QMI8658 accel read failed", 0);
         RETURN_THROWS();
     }
@@ -118,6 +119,7 @@ PHP_METHOD(Qmi8658, gyro)
     read_triplet(return_value, d, QMI_GX_L, QMI_GYR_SENS, &ok);
     if (!ok) {
         zval_ptr_dtor(return_value);
+        ZVAL_NULL(return_value);   /* the caller frees an unused result: not the array freed here */
         zend_throw_exception(zend_ce_exception, "QMI8658 gyro read failed", 0);
         RETURN_THROWS();
     }
